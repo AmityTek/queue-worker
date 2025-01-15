@@ -3,8 +3,15 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+         ".env*"
+      ],
+      "outputs": [
+        "apps/backend/dist/**",
+        "apps/frontend/.next/**",
+        "packages/shared/dist/**"
+      ]
     },
     "lint": {},
     "type-check": {},
@@ -12,8 +19,13 @@
       "cache": false,
       "persistent": true
     },
+   "test": {
+      "inputs": ["$TURBO_DEFAULT$", "**/*.test.js", "**/*.test.ts", ".env"],
+      "outputs": []
+    },
     "clean": {
       "cache": false
     }
+    
   }
 }

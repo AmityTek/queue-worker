@@ -47,7 +47,7 @@ jobs:
 
       - name: Run Tests for Backend & Frontend
         working-directory: ./
-        run: npm test
+        run: npx turbo run test
 
   build:
     name: Build All Projects

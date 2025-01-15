@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies for all workspaces
         run: npm install --workspaces
 
+      - name: Install Turbo globally
+        run: npm install -g turbo
+
       - name: Restore Turbo Cache
         uses: actions/cache@v3
         with:
@@ -62,8 +65,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
+      - name: Debug: Check Jest installation
+        run: ls -la apps/backend/node_modules/.bin
+
       - name: Run Tests for Backend & Frontend
-        run: npx turbo run test --cache
+        run: npx turbo run test --force
 
   build:
     name: Build All Projects
@@ -83,4 +89,4 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build with Turbo
-        run: npx turbo run build --cache
+        run: npx turbo run build --force

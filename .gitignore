@@ -30,8 +30,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 apps/frontend/.env
-apps/backend/.env.test
-apps/backend/.env.test
+apps/backend/.env
 
 # turbo
 .turbo

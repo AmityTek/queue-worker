@@ -12,6 +12,23 @@ jobs:
   setup:
     name: Setup and Install Dependencies
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies for all workspaces
+        run: npm install --workspaces
+
+  test:
+    name: Run Tests with Turbo
+    runs-on: ubuntu-latest
+    needs: setup
     services:
       redis:
         image: redis:latest
@@ -34,28 +51,11 @@ jobs:
       - name: Install dependencies for all workspaces
         run: npm install --workspaces
 
-  test:
-    name: Run Tests with Turbo
-    runs-on: ubuntu-latest
-    needs: setup
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
-
-      - name: Install dependencies for all workspaces
-        run: npm install --workspaces
-
       - name: Run Tests with Turbo
         env:
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
-          MONGO_URI: mongodb://127.0.0.1:27017/testdb
+          MONGO_URI: mongodb://mongodb:27017/queueApp
         run: npx turbo run test --no-cache
 
   build:

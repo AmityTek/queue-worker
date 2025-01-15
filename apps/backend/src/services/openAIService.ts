@@ -8,8 +8,9 @@ const openai = new OpenAI({
 });
 
 if (!process.env.OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY is not defined in the environment variables.');
+  console.log('OPENAI_API_KEY is not defined in the environment variables.');
 }
+
 
 /**
  * Calls the OpenAI API to process a given prompt.

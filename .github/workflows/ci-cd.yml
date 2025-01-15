@@ -65,9 +65,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
-      - name: Debug: Check Jest installation
-        run: ls -la apps/backend/node_modules/.bin
-
       - name: Run Tests for Backend & Frontend
         run: npx turbo run test --force
 

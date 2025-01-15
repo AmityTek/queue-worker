@@ -21,35 +21,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-          cache: 'npm'
-
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            apps/backend/node_modules
-            apps/frontend/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json', '**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
 
       - name: Install dependencies for all workspaces
         run: npm install --workspaces
 
-      - name: Install Turbo globally
-        run: npm install -g turbo
-
-      - name: Restore Turbo Cache
-        uses: actions/cache@v3
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/package-lock.json', 'turbo.json') }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-
   test:
-    name: Run Tests
+    name: Run Tests with Turbo
     runs-on: ubuntu-latest
     needs: setup
 
@@ -57,19 +34,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Restore Turbo Cache
-        uses: actions/cache@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/package-lock.json', 'turbo.json') }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
+          node-version: '22'
 
-      - name: Run Tests for Backend & Frontend
-        run: npx turbo run test --force
+      - name: Install dependencies for all workspaces
+        run: npm install --workspaces
+
+      - name: Run Tests with Turbo
+        run: npx turbo run test --no-cache
 
   build:
-    name: Build All Projects
+    name: Build All Projects with Turbo
     runs-on: ubuntu-latest
     needs: test
 
@@ -77,13 +54,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Restore Turbo Cache
-        uses: actions/cache@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/package-lock.json', 'turbo.json') }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
+          node-version: '22'
 
-      - name: Build with Turbo
-        run: npx turbo run build --force
+      - name: Install dependencies for all workspaces
+        run: npm install --workspaces
+
+      - name: Build Projects with Turbo
+        run: npx turbo run build --no-cache

@@ -21,7 +21,8 @@
     },
    "test": {
       "inputs": ["$TURBO_DEFAULT$", "**/*.test.js", "**/*.test.ts", ".env"],
-      "outputs": []
+      "outputs": [],
+      "dependsOn": ["^install"]
     },
     "clean": {
       "cache": false

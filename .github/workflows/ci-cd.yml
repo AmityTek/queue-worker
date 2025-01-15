@@ -3,10 +3,10 @@ name: Monorepo CI Pipeline
 on:
   push:
     branches:
-      - main    
+      - main
   pull_request:
     branches:
-      - '**'    
+      - '**'
 
 jobs:
   setup:
@@ -30,15 +30,12 @@ jobs:
             node_modules
             apps/backend/node_modules
             apps/frontend/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json', '**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Install dependencies and Turbo CLI
-        run: |
-          npm install --workspace=apps/backend
-          npm install --workspace=apps/frontend
-          npm install -g turbo
+      - name: Install dependencies for all workspaces
+        run: npm install --workspaces
 
       - name: Restore Turbo Cache
         uses: actions/cache@v3
@@ -57,9 +54,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Restore Turbo Cache
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ hashFiles('**/package-lock.json', 'turbo.json') }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
       - name: Run Tests for Backend & Frontend
-        working-directory: ./
-        run: npx turbo run test
+        run: npx turbo run test --cache
 
   build:
     name: Build All Projects
@@ -70,11 +74,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Restore Turbo Cache
+        uses: actions/cache@v3
         with:
-          node-version: '22'
-          cache: 'npm'
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ hashFiles('**/package-lock.json', 'turbo.json') }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Build with Turbo
-        run: npx turbo run build
+        run: npx turbo run build --cache

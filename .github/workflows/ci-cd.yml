@@ -51,11 +51,23 @@ jobs:
       - name: Install dependencies for all workspaces
         run: npm install --workspaces
 
+      - name: Wait for Redis and MongoDB to be ready
+        run: |
+          for i in {1..10}; do
+            nc -zv 127.0.0.1 6379 && echo "Redis is ready" && break
+            sleep 2
+          done
+          for i in {1..10}; do
+            nc -zv 127.0.0.1 27017 && echo "MongoDB is ready" && break
+            sleep 2
+          done
+
       - name: Run Tests with Turbo
         env:
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
-          MONGO_URI: mongodb://mongodb:27017/queueApp
+          MONGO_URI: mongodb://127.0.0.1:27017/queueApp
+          OPENAI_API_KEY: dummy_key
         run: npx turbo run test --no-cache
 
   build:
